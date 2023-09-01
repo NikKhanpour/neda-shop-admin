@@ -39,4 +39,7 @@ function paginate(value) {
 	page.value = value;
 	refresh();
 }
+definePageMeta({
+	middleware: "auth",
+});
 </script>
