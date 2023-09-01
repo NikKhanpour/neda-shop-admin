@@ -1,5 +1,15 @@
 <template>
-	<h1>index page</h1>
+	<main class="col-md-9 ms-sm-auto col-lg-12 px-md-4">
+		<div
+			class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
+		>
+			<h4 class="fw-bold">داشبورد</h4>
+		</div>
+
+		<ClientOnly>
+			<Chart :data="chartData" />
+		</ClientOnly>
+	</main>
 </template>
 <script setup>
 definePageMeta({
@@ -10,5 +20,4 @@ const { data: chartData } = await useFetch("/api/global", {
 	headers: useRequestHeaders(["cookie"]),
 	query: { url: "/transactions/chart" },
 });
-console.log(chartData.value);
 </script>
