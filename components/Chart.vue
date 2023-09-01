@@ -1,5 +1,5 @@
 <template>
-	<div ref="chartDiv" style="height: 500px"></div>
+	<div ref="chartDiv" style="height: 600px"></div>
 </template>
 <script setup>
 import * as am5 from "@amcharts/amcharts5";

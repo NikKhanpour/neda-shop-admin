@@ -7,6 +7,7 @@ export default defineNuxtConfig({
       apiBase: 'http://localhost:8000/api/admin-panel'
     }
   },
+  modules: ['@formkit/nuxt'],
   build: {
     transpile: ['vue-toastification']
   },

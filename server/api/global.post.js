@@ -1,10 +1,12 @@
 export default defineEventHandler(async (event) => {
     const { public: { apiBase } } = useRuntimeConfig()
+    const body = await readBody(event)
     const token = getCookie(event, 'panel-token')
-    const query = getQuery(event)
-    let page = query.hasOwnProperty('page') ? `?page=${query.page}` : '';
+    const query = getQuery(event);
     try {
-        const data = await $fetch(`${apiBase}${query.url}${page}`, {
+        const data = await $fetch(`${apiBase}${query.url}`, {
+            method: 'POST',
+            body,
             headers: {
                 'Accept': 'application/json',
                 'Authorization': `Bearer ${token}`
