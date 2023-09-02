@@ -23,13 +23,14 @@
 			<div class="col-md-3">
 				<FormKit
 					type="text"
+					id="name"
 					name="name"
 					label="نام"
 					label-class="form-label"
 					input-class="form-control"
 					messages-class="form-text text-danger"
-					validation="require"
-					:validation-messages="{ require: 'فیلد نام اجباریست' }"
+					validation="required"
+					:validation-messages="{ required: 'فیلد نام اجباریست' }"
 				/>
 			</div>
 			<div class="col-md-3">
@@ -40,8 +41,8 @@
 					label-class="form-label"
 					input-class="form-control"
 					messages-class="form-text text-danger"
-					validation="require"
-					:validation-messages="{ require: 'فیلد ایمیل اجباریست' }"
+					validation="required"
+					:validation-messages="{ required: 'فیلد ایمیل اجباریست' }"
 				/>
 			</div>
 			<div class="col-md-3">
@@ -52,9 +53,9 @@
 					label-class="form-label"
 					input-class="form-control"
 					messages-class="form-text text-danger"
-					:validation="[['require'], ['matches', /^(\+98|0)?9\d{9}$/i]]"
+					:validation="[['required'], ['matches', /^(\+98|0)?9\d{9}$/i]]"
 					:validation-messages="{
-						require: 'فیلد ایمیل اجباریست',
+						required: 'فیلد ایمیل اجباریست',
 						matches: 'فرمت شماره تماس معتبر نمیباشد',
 					}"
 				/>
@@ -67,8 +68,8 @@
 					label-class="form-label"
 					input-class="form-control"
 					messages-class="form-text text-danger"
-					validation="require"
-					:validation-messages="{ require: 'فیلد پسوورد اجباریست' }"
+					validation="required"
+					:validation-messages="{ required: 'فیلد پسوورد اجباریست' }"
 				/>
 			</div>
 			<FormKit
