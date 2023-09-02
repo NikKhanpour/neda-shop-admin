@@ -190,7 +190,6 @@
 	</ClientOnly>
 </template>
 <script setup>
-import { load } from "@amcharts/amcharts5/.internal/core/util/Net";
 import { useToast } from "vue-toastification";
 
 const primaryImage = ref(null);
@@ -207,10 +206,19 @@ const { data: categories } = await useFetch("/api/global", {
 });
 
 function setImages(el) {
-	images.value = el.target.value;
+	images.value = el.target.files;
 }
 
 async function create(data) {
+	if (!primaryImage.value) {
+		toast.error("عکس اصلی اجباری است");
+		return;
+	}
+	if (!images.value) {
+		toast.error("تصاویر اجباری است");
+		return;
+	}
+
 	const formData = new FormData();
 	for (let index = 0; index < images.value.length; index++) {
 		formData.append("images", images.value[index]);
@@ -232,8 +240,7 @@ async function create(data) {
 		errors.value = [];
 		await $fetch("/api/product/create", {
 			method: "POST",
-			headers: useRequestHeaders(["cookie"]),
-			query: { url: "/products" },
+			body: formData,
 		});
 		toast.success("ایجاد محصول باموفقیت انجام شد");
 		return navigateTo("/products");
@@ -243,4 +250,7 @@ async function create(data) {
 		loading.value = false;
 	}
 }
+definePageMeta({
+	middleware: "auth",
+});
 </script>
