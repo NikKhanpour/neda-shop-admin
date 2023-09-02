@@ -4,7 +4,11 @@
 	>
 		<h4 class="fw-bold">ایجاد محصول</h4>
 	</div>
-
+	<div v-if="errors.length > 0" class="alert alert-danger">
+		<ul class="mb-0">
+			<li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+		</ul>
+	</div>
 	<ClientOnly fallback-tag="span" fallback="در حال بارگذاری...">
 		<FormKit
 			type="form"
@@ -170,18 +174,32 @@
 					/>
 				</div>
 
-				<FormKit type="submit" input-class="btn btn-outline-dark my-5">
+				<FormKit
+					:disabled="loading"
+					type="submit"
+					input-class="btn btn-outline-dark my-5"
+				>
 					ایجاد محصول
+					<div
+						v-if="loading"
+						class="spinner-border spinner-border-sm ms-2"
+					></div>
 				</FormKit>
 			</div>
 		</FormKit>
 	</ClientOnly>
 </template>
 <script setup>
+import { load } from "@amcharts/amcharts5/.internal/core/util/Net";
+import { useToast } from "vue-toastification";
+
 const primaryImage = ref(null);
 const saleDateFrom = ref(null);
 const saleDateEnd = ref(null);
 const images = ref(null);
+const loading = ref(false);
+const errors = ref([]);
+const toast = useToast();
 
 const { data: categories } = await useFetch("/api/global", {
 	headers: useRequestHeaders(["cookie"]),
@@ -192,7 +210,37 @@ function setImages(el) {
 	images.value = el.target.value;
 }
 
-function create(formData) {
-	console.log(formData);
+async function create(data) {
+	const formData = new FormData();
+	for (let index = 0; index < images.value.length; index++) {
+		formData.append("images", images.value[index]);
+	}
+
+	formData.append("primary_image", primaryImage.value);
+	formData.append("name", data.name);
+	formData.append("category_id", data.category_id);
+	formData.append("status", data.status);
+	formData.append("price", data.price);
+	formData.append("quantity", data.quantity);
+	formData.append("sale_price", data.sale_price);
+	formData.append("date_on_sale_from", saleDateFrom.value);
+	formData.append("date_on_sale_to", saleDateEnd.value);
+	formData.append("description", data.description);
+
+	try {
+		loading.value = true;
+		errors.value = [];
+		await $fetch("/api/product/create", {
+			method: "POST",
+			headers: useRequestHeaders(["cookie"]),
+			query: { url: "/products" },
+		});
+		toast.success("ایجاد محصول باموفقیت انجام شد");
+		return navigateTo("/products");
+	} catch (error) {
+		errors.value = Object.values(error.data.data.message).flat();
+	} finally {
+		loading.value = false;
+	}
 }
 </script>
