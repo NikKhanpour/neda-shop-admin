@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
             maxAge: 60 * 60 * 24 * 7,
             path: '/'
         })
-        return data.data.user
+        return data.data
     } catch (error) {
         return error
     }

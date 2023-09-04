@@ -62,12 +62,13 @@ async function login() {
 	try {
 		loading.value = true;
 		errors.value = [];
-		const user = await $fetch("/api/auth/login", {
+		const data = await $fetch("/api/auth/login", {
 			method: "POST",
 			body: formData,
 		});
-		authUser.value = user;
+		authUser.value = data.user;
 		toast.success("وارد سیستم شدید");
+		localStorage.setItem("panel-token", data.token);
 		return navigateTo("/");
 	} catch (error) {
 		errors.value = Object.values(error.data.data.message).flat();

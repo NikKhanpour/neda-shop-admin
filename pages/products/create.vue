@@ -191,7 +191,6 @@
 </template>
 <script setup>
 import { useToast } from "vue-toastification";
-
 const primaryImage = ref(null);
 const saleDateFrom = ref(null);
 const saleDateEnd = ref(null);
@@ -199,6 +198,10 @@ const images = ref(null);
 const loading = ref(false);
 const errors = ref([]);
 const toast = useToast();
+const token = localStorage.getItem("panel-token");
+const {
+	public: { apiBase },
+} = useRuntimeConfig();
 
 const { data: categories } = await useFetch("/api/global", {
 	headers: useRequestHeaders(["cookie"]),
@@ -210,42 +213,49 @@ function setImages(el) {
 }
 
 async function create(data) {
-	if (!primaryImage.value) {
-		toast.error("عکس اصلی اجباری است");
+	if (primaryImage.value == null) {
+		toast.success("تصویر اصلی الزامی است");
 		return;
 	}
-	if (!images.value) {
-		toast.error("تصاویر اجباری است");
-		return;
-	}
-
 	const formData = new FormData();
-	for (let index = 0; index < images.value.length; index++) {
-		formData.append("images", images.value[index]);
+	if (images.value > 0) {
+		for (let i = 0; i < images.value.length; i++) {
+			formData.append("images", images.value[i]);
+		}
 	}
-
+	console.log(saleDateEnd.value);
 	formData.append("primary_image", primaryImage.value);
 	formData.append("name", data.name);
 	formData.append("category_id", data.category_id);
 	formData.append("status", data.status);
 	formData.append("price", data.price);
 	formData.append("quantity", data.quantity);
-	formData.append("sale_price", data.sale_price);
-	formData.append("date_on_sale_from", saleDateFrom.value);
-	formData.append("date_on_sale_to", saleDateEnd.value);
 	formData.append("description", data.description);
-
+	if (
+		data.saleDateEnd != null &&
+		data.saleDateFrom != null &&
+		data.sale_price != null
+	) {
+		formData.append("sale_price", data.sale_price);
+		formData.append("date_on_sale_from", saleDateFrom.value);
+		formData.append("date_on_sale_to", saleDateEnd.value);
+	}
 	try {
 		loading.value = true;
 		errors.value = [];
-		await $fetch("/api/product/create", {
+
+		await $fetch(`${apiBase}/products`, {
 			method: "POST",
 			body: formData,
+			headers: {
+				Accept: "application/json",
+				Authorization: `Bearer ${token}`,
+			},
 		});
-		toast.success("ایجاد محصول باموفقیت انجام شد");
-		return navigateTo("/products");
+		toast.success("ایجاد محصول با موفقیت انجام شد");
+		return navigateTo('/products')
 	} catch (error) {
-		errors.value = Object.values(error.data.data.message).flat();
+		errors.value = Object.values(error.data.message).flat();
 	} finally {
 		loading.value = false;
 	}
