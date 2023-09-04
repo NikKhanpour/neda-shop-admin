@@ -1,9 +1,9 @@
 <template>
 	<div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-		<h4 class="fw-bold">سفارش ها</h4>
+		<h4 class="fw-bold">تراکنش ها</h4>
 	</div>
 
-	<OrderList :orders="data.orders" />
+	<TransactionList :transactions="data.transactions" />
 
 	<div class="d-flex justify-content-center">
 		<nav aria-label="navigation">
@@ -22,7 +22,7 @@
 const page = ref(0);
 const { data, refresh } = await useFetch(() => "/api/global", {
 	headers: useRequestHeaders(["cookie"]),
-	query: { url: "/orders", page },
+	query: { url: "/transactions", page },
 });
 
 function paginate(value) {
