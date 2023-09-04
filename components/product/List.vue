@@ -15,7 +15,7 @@
 				<tr v-for="product in products" :key="product.id">
 					<th>
 						<img
-							src="images/preloader.png"
+							src="/images/preloader.png"
 							width="80"
 							height="53"
 							v-img="product.primary_image"
@@ -27,7 +27,11 @@
 					<td>{{ product.status }}</td>
 					<td>
 						<div class="d-flex">
-							<button class="btn btn-sm btn-outline-dark me-2">نمایش</button>
+							<NuxtLink
+								:to="`/products/${product.id}`"
+								class="btn btn-sm btn-outline-dark me-2"
+								>نمایش</NuxtLink
+							>
 							<button class="btn btn-sm btn-dark">ویرایش</button>
 						</div>
 					</td>
