@@ -1,6 +1,6 @@
 <template>
 	<div>
-		<button @click="deleteItem" :disabled="loading" class="btn btn-dark">
+		<button @click="deleteItem" :disabled="loading" class="btn btn-sm btn-dark">
 			حذف
 			<div v-if="loading" class="spinner-border spinner-border-sm ms-2"></div>
 		</button>

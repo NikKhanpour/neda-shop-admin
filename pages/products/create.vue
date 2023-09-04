@@ -198,7 +198,9 @@ const images = ref(null);
 const loading = ref(false);
 const errors = ref([]);
 const toast = useToast();
-const token = localStorage.getItem("panel-token");
+if(process.client){
+	var token = localStorage.getItem("panel-token");
+}
 const {
 	public: { apiBase },
 } = useRuntimeConfig();
@@ -214,16 +216,15 @@ function setImages(el) {
 
 async function create(data) {
 	if (primaryImage.value == null) {
-		toast.success("تصویر اصلی الزامی است");
+		toast.error("تصویر اصلی الزامی است");
 		return;
 	}
 	const formData = new FormData();
-	if (images.value > 0) {
+	if (images.value) {
 		for (let i = 0; i < images.value.length; i++) {
-			formData.append("images", images.value[i]);
+			formData.append(`images[${i}]`, images.value[i]);
 		}
 	}
-	console.log(saleDateEnd.value);
 	formData.append("primary_image", primaryImage.value);
 	formData.append("name", data.name);
 	formData.append("category_id", data.category_id);
@@ -248,12 +249,12 @@ async function create(data) {
 			method: "POST",
 			body: formData,
 			headers: {
-				Accept: "application/json",
-				Authorization: `Bearer ${token}`,
+				"Accept": "application/json",
+				"Authorization": `Bearer ${token}`,
 			},
 		});
 		toast.success("ایجاد محصول با موفقیت انجام شد");
-		return navigateTo('/products')
+		return navigateTo("/products");
 	} catch (error) {
 		errors.value = Object.values(error.data.message).flat();
 	} finally {

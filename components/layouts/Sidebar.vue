@@ -1,46 +1,30 @@
 <template>
-	<nav
-		id="sidebarMenu"
-		class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse"
-	>
+	<nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
 		<div class="position-sticky pt-3">
 			<ul class="nav flex-column">
 				<li class="nav-item">
-					<NuxtLink
-						class="nav-link"
-						:class="{ active: $route.path == '/' }"
-						aria-current="page"
-						to="/"
-					>
+					<NuxtLink class="nav-link" :class="{ active: $route.path == '/' }" aria-current="page" to="/">
 						<i class="bi bi-grid me-2"></i>
 						داشبورد
 					</NuxtLink>
 				</li>
 				<li class="nav-item">
-					<NuxtLink
-						class="nav-link"
-						:class="{ active: $route.path.includes('/users') }"
-						to="/users"
-					>
+					<NuxtLink class="nav-link" :class="{ active: $route.path.includes('/users') }" to="/users">
 						<i class="bi bi-people me-2"></i>
 						کاربران
 					</NuxtLink>
 				</li>
 				<li class="nav-item">
-					<NuxtLink
-						class="nav-link"
-						:class="{ active: $route.path.includes('/products') }"
-						to="/products"
-					>
+					<NuxtLink class="nav-link" :class="{ active: $route.path.includes('/products') }" to="/products">
 						<i class="bi bi-box-seam me-2"></i>
 						محصولات
 					</NuxtLink>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link" href="#">
+					<NuxtLink class="nav-link" :class="{ active: $route.path.includes('/categories') }" to="/categories">
 						<i class="bi bi-grid-3x3-gap me-2"></i>
 						دسته بندی
-					</a>
+					</NuxtLink>
 				</li>
 				<li class="nav-item">
 					<a class="nav-link" href="#">
