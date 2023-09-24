@@ -1,97 +1,116 @@
 <template>
-	<FormKit
-		type="form"
-		@submit="update"
-		:incomplete-message="false"
-		:actions="false"
+	<div
+		class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom"
 	>
-		<div
-			v-if="errors.length > 0"
-			class="alert alert-danger col-md-4 mt-5"
-			role="alert"
-		>
-			<ul class="mb-0">
-				<li v-for="(error, index) in errors" :key="index">{{ error }}</li>
-			</ul>
-		</div>
-		<div class="row gy-4 mt-2">
-			<div class="col-md-3">
-				<FormKit
+		<h4 class="fw-bold">ویرایش کاربر با آیدی {{ data.data.id }}</h4>
+	</div>
+	<div class="container">
+		<div class="row text-center">
+			<div v-if="errors.length > 0" class="alert alert-danger">
+				<ul class="mb-0">
+					<li v-for="(error, index) in errors" :key="index">{{ error }}</li>
+				</ul>
+			</div>
+			<div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-4">
+				<label for="name" class="form-label">نام</label>
+				<input
+					v-model="user.name"
+					id="name"
 					type="text"
-					:value="user.name"
-					name="name"
-					label="نام"
-					label-class="form-label"
-					input-class="form-control"
-					messages-class="form-text text-danger"
-					validation="require"
-					:validation-messages="{ require: 'فیلد نام اجباریست' }"
+					class="form-control text-center"
 				/>
 			</div>
-			<div class="col-md-3">
-				<FormKit
-					type="email"
-					:value="user.email"
-					name="email"
-					label="ایمیل"
-					label-class="form-label"
-					input-class="form-control"
-					messages-class="form-text text-danger"
-					validation="require"
-					:validation-messages="{ require: 'فیلد ایمیل اجباریست' }"
-				/>
-			</div>
-			<div class="col-md-3">
-				<FormKit
+			<div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-4">
+				<label for="cellphone" class="form-label">شماره</label>
+				<input
+					v-model="user.cellphone"
+					id="cellphone"
 					type="text"
-					:value="user.cellphone"
-					name="cellphone"
-					label="شماره تماس"
-					label-class="form-label"
-					input-class="form-control"
-					messages-class="form-text text-danger"
-					:validation="[['require'], ['matches', /^(\+98|0)?9\d{9}$/i]]"
-					:validation-messages="{
-						require: 'فیلد ایمیل اجباریست',
-						matches: 'فرمت شماره تماس معتبر نمیباشد',
-					}"
+					class="form-control text-center"
 				/>
 			</div>
-			<FormKit
-				:disabled="loading"
-				type="submit"
-				input-class="btn btn-outline-dark mt-3"
-			>
-				ایجاد ویرایش
-				<div v-if="loading" class="spinner-border spinner-border-sm ms-2"></div>
-			</FormKit>
+			<div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-4">
+				<label for="email" class="form-label">ایمیل</label>
+				<input
+					v-model="user.email"
+					id="email"
+					type="text"
+					class="form-control text-center"
+				/>
+			</div>
+			<div class="col-12 col-sm-6 col-md-6 col-lg-3 mt-4">
+				<label for="create_at" class="form-label">پسورد</label>
+				<input
+					v-model="user.password"
+					id="create_at"
+					type="text"
+					class="form-control text-center"
+				/>
+			</div>
+			<div class="col-12 mt-4">
+				<button
+					@click="update"
+					:disabled="loading"
+					class="btn btn-outline-dark w-100"
+				>
+					ویرایش
+					<div
+						v-if="loading"
+						class="spinner-border spinner-border-sm ms-2"
+					></div>
+				</button>
+			</div>
 		</div>
-	</FormKit>
+	</div>
 </template>
 <script setup>
 import { useToast } from "vue-toastification";
-const toast = useToast();
-const loading = ref(false);
-const errors = ref([]);
+
 const route = useRoute();
-const { data: user } = await useFetch("/api/global", {
-	headers: useRequestHeaders(["cookie"]),
-	query: { url: `/users/${route.params.id}` },
+const toast = useToast();
+const errors = ref([]);
+const loading = ref(false);
+
+const {
+	public: { apiBase },
+} = useRuntimeConfig();
+if (process.client) {
+	var token = localStorage.getItem("panel-token");
+}
+
+const data = await $fetch(`${apiBase}/users/${route.params.id}`, {
+	headers: {
+		Accept: "application/json",
+		Authorization: `Bearer ${token}`,
+	},
 });
 
-async function update(formData) {
+const user = reactive({
+	name: data.data.name,
+	password: "",
+	email: data.data.email,
+	cellphone: data.data.cellphone,
+});
+
+async function update() {
+	if (user.name == "" || user.email == "" || user.cellphone == "") {
+		toast.error("به غیر از پسورد بقیه فیلدها الزامیست");
+		return;
+	}
 	try {
 		loading.value = true;
-		errors.value = [];
-		await $fetch("/api/global", {
+		await $fetch(`${apiBase}/users/${route.params.id}`, {
 			method: "PUT",
-			body: formData,
-			query: { url: `/users/${user.value.id}` },
+			body: user,
+			headers: {
+				Accept: "application/json",
+				Authorization: `Bearer ${token}`,
+			},
 		});
 		toast.success("ویرایش انجام شد");
 		return navigateTo("/users");
 	} catch (error) {
-		errors.value = Object.values(error.data.data.message).flat();
+		errors.value = Object.values(error.data.message).flat();
 	} finally {
 		loading.value = false;
 	}

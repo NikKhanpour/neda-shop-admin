@@ -1,18 +1,19 @@
 <template>
-	<div ref="chartDiv" style="height: 600px"></div>
+	<div ref="chartdiv" style="height: 500px"></div>
 </template>
 <script setup>
 import * as am5 from "@amcharts/amcharts5";
 import * as am5xy from "@amcharts/amcharts5/xy";
 import am5themes_Animated from "@amcharts/amcharts5/themes/Animated";
 
-const chartDiv = ref(null);
-const props = defineProps(["data"]);
+const chartdiv = ref(null);
+
+const props = defineProps(["chartData"]);
 onMounted(() => {
 	am5.ready(function () {
 		// Create root element
 		// https://www.amcharts.com/docs/v5/getting-started/#Root_element
-		let root = am5.Root.new(chartDiv.value);
+		let root = am5.Root.new(chartdiv.value);
 
 		// Set themes
 		// https://www.amcharts.com/docs/v5/concepts/themes/
@@ -105,7 +106,6 @@ onMounted(() => {
 		});
 
 		// Set data
-		let data = props.data;
 		// let data = [
 		// 	{
 		// 		month: "فروردین",
@@ -156,6 +156,7 @@ onMounted(() => {
 		// 		value: 598,
 		// 	},
 		// ];
+		let data = props.chartData;
 
 		xAxis.data.setAll(data);
 		series.data.setAll(data);

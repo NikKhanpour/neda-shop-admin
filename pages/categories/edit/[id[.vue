@@ -1,6 +1,6 @@
 <template>
 	<div class="d-flex justify-content-center pt-3 pb-2 mb-3 border-bottom">
-		<h4 class="fw-bold">ایجاد دسته بندی</h4>
+		<h4 class="fw-bold">دسته بندی با آیدی {{ data.data.id }}</h4>
 	</div>
 	<div class="container">
 		<div class="row d-flex justify-content-center text-center">
@@ -36,7 +36,7 @@
 					:disabled="loading"
 					class="btn btn-outline-dark w-100 fw-bold"
 				>
-					ایجاد
+					ویرایش
 					<div
 						v-if="loading"
 						class="spinner-border spinner-border-sm ms-2"
@@ -54,11 +54,6 @@ const route = useRoute();
 const toast = useToast();
 const errors = ref([]);
 
-const formData = reactive({
-	name: "",
-	status: "",
-});
-
 const {
 	public: { apiBase },
 } = useRuntimeConfig();
@@ -67,12 +62,28 @@ if (process.client) {
 	var token = localStorage.getItem("panel-token");
 }
 
+const data = await $fetch(`${apiBase}/categories/${route.params.id}`, {
+	headers: {
+		Accept: "application/json",
+		Authorization: `Bearer ${token}`,
+	},
+});
+
+const formData = reactive({
+	name: data.data.name,
+	status: data.data.description,
+});
+
 async function updateCategory() {
 	try {
 		loading.value = true;
-		await $fetch(`${apiBase}/categories`, {
-			method: "POST",
-			body: { name: formData.name, description: formData.status },
+		await $fetch(`${apiBase}/categories/${route.params.id}`, {
+			method: "PUT",
+			body: {
+				name: formData.name,
+				description: formData.status,
+				parent_id: data.data.parent_id,
+			},
 			headers: {
 				Accept: "application/json",
 				Authorization: `Bearer ${token}`,

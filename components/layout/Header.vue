@@ -2,7 +2,9 @@
 	<header
 		class="navbar text-center navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow"
 	>
-		<a class="navbar-brand col-md-3 col-lg-2 me-0 px-3" href="#">webprog.io</a>
+		<NuxtLink class="navbar-brand col-md-3 col-lg-2 me-0 px-3" to="/"
+			>NedaShop</NuxtLink
+		>
 		<button
 			class="navbar-toggler position-absolute d-md-none collapsed"
 			type="button"
@@ -18,22 +20,36 @@
 		<div class="navbar-nav">
 			<div class="nav-item text-nowrap d-flex align-items-center">
 				<span class="nav-link">{{ authUser.name }}</span>
-				<a @click="logout" class="nav-link px-3" href="#">خروج</a>
+				<div @click="logout" class="nav-link px-3">خروج</div>
 			</div>
 		</div>
 	</header>
 </template>
 <script setup>
-import { useToast } from "vue-toastification";
-const toast = useToast();
 const { authUser } = useAuth();
+if (process.client) {
+	var token = localStorage.getItem("panel-token");
+}
+const {
+	public: { apiBase },
+} = useRuntimeConfig();
 
 async function logout() {
-	await useFetch("/api/auth/logout", {
-		method: "POST",
-	});
-	toast.warning("از سیستم خارج شدید");
-	authUser.value = null;
-	return navigateTo("/auth/login");
+	try {
+		await $fetch(`${apiBase}/auth/logout`, {
+			method: "POST",
+			headers: {
+				Accept: "application/josn",
+				Authorization: `Bearer ${token}`,
+			},
+		});
+		authUser.value = null;
+		if (process.client) {
+			localStorage.removeItem("panel-token");
+		}
+		location.reload();
+	} catch (error) {
+		return error;
+	}
 }
 </script>
