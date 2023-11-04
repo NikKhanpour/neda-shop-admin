@@ -23,7 +23,7 @@
 					<td>{{ user.name }}</td>
 					<td>{{ user.email }}</td>
 					<td>{{ user.cellphone }}</td>
-					<td>{{ user.create_at }}</td>
+					<td>{{ user.created_at }}</td>
 					<td>
 						<div class="d-flex">
 							<NuxtLink

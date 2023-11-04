@@ -38,7 +38,7 @@
 							<button :disabled="loading" type="submit" class="btn btn-dark">
 								ورود
 								<div
-									v-if="loading.value"
+									v-if="loading"
 									class="spinner-border spinner-border-sm ms-2"
 								></div>
 							</button>
